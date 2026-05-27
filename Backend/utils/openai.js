@@ -153,26 +153,29 @@ Currently, the server is running in **Preview Mode** because no \`GROQ_API_KEY\`
 - "Brainstorm some project ideas"`;
 };
 
-const getOpenAIAPIResponse = async(message) => {
-     if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === "your_groq_api_key_here" || process.env.GROQ_API_KEY.includes("your_")) {
-         // Return mock response if no key is configured
-         return getMockAPIResponse(message);
-     }
+const getOpenAIAPIResponse = async(messages) => {
+     const messageArray = Array.isArray(messages) ? messages : [{ role: "user", content: messages }];
+     
+     const lastUserMessage = [...messageArray].reverse().find(m => m.role === "user")?.content || "";
 
-     const options = {
-        method: "POST",
-        headers: {
-            "Content-Type": "application/json",
-            "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
-        },
-        body: JSON.stringify({
-            model: "llama-3.3-70b-versatile",
-            messages: [{
-                role: "user",
-                content: message
-            }]
-        })
-    }
+     if (!process.env.GROQ_API_KEY || process.env.GROQ_API_KEY === "your_groq_api_key_here" || process.env.GROQ_API_KEY.includes("your_")) {
+          // Return mock response if no key is configured
+          return getMockAPIResponse(lastUserMessage);
+      }
+
+      const formattedMessages = messageArray.map(({ role, content }) => ({ role, content }));
+
+      const options = {
+         method: "POST",
+         headers: {
+             "Content-Type": "application/json",
+             "Authorization": `Bearer ${process.env.GROQ_API_KEY}`
+         },
+         body: JSON.stringify({
+             model: "llama-3.3-70b-versatile",
+             messages: formattedMessages
+         })
+     }
     try{
         const response = await fetch("https://api.groq.com/openai/v1/chat/completions", options);
         if (!response.ok) {
