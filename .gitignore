@@ -93,3 +93,7 @@ temp/
 
 # DynamoDB Local files
 .dynamodb/
+
+# Local Database Storage
+/Backend/data/
+
