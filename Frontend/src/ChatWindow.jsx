@@ -182,7 +182,7 @@ function ChatWindow() {
           <div className="welcome-content-wrapper">
             <div className="welcome-greeting">
               <span className="flower-symbol">✦</span>
-              <h2>{getGreeting()}, Sai Kishan A</h2>
+              <h2>{getGreeting()}, My Companion</h2>
             </div>
             
             <form className="welcome-input-form" onSubmit={handleSubmit}>
