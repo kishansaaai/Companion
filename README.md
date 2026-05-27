@@ -31,7 +31,7 @@ The primary objective of **Companion** is to move away from cluttered, generic, 
 ## 🚀 Key Features
 
 ### 1. Claude-Matching Welcome Screen
-- **Time-Based Welcome Greetings**: Determines local hour to serve `"Morning, Sai Kishan A"`, `"Afternoon, Sai Kishan A"`, or `"Evening, Sai Kishan A"`.
+- **Time-Based Welcome Greetings**: Determines local hour to serve `"Morning, My Companion"`, `"Afternoon, My Companion"`, or `"Evening, My Companion"`.
 - **Animated Accent Asterisk**: A spinning flower symbol next to the main header utilizing keyframe rotations.
 - **Suggested Prompts**: 5 pre-styled horizontal pills (`Code`, `Learn`, `Write`, `Life stuff`, and `Companion's choice`) to automatically populate the input text area.
 - **Dynamic Transition**: Sending the first message automatically fades out the welcome card, slides the input area to the bottom, and mounts the scrolling conversation timeline.
