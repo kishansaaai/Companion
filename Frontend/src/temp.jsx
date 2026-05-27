@@ -1,13 +1,14 @@
 import { useContext, useEffect } from "react";
 import "./Sidebar.css";
 import blacklogo from "./assets/blacklogo.png";
-import { MyContext } from "./MyContext";
+import { MyContext } from "./MyContext.jsx";
 import { v1 as uuidv1 } from "uuid";
 
 function Sidebar() {
     const { 
         allThreads, 
         setAllThreads, 
+        getAllThreads,
         currThreadId, 
         setNewChat, 
         setPrompt, 
@@ -15,38 +16,11 @@ function Sidebar() {
         setPrevChat, 
         setCurrentThreadId, 
         showHistory, 
+        setShowHistory,
+        checkConfigStatus,
         user, 
         showToast 
     } = useContext(MyContext);
-
-    const getAllThreads = async () => {
-        try {
-            const response = await fetch("http://localhost:8080/api/thread", {
-                method: 'GET',
-                headers: {
-                    'Content-Type': 'application/json',
-                }
-            });
-
-            if (!response.ok) {
-                throw new Error(`HTTP error! status: ${response.status}`);
-            }
-
-            const res = await response.json();
-            
-            let filteredData = [];
-            if (Array.isArray(res)) {
-                filteredData = res.map((thread) => ({
-                    threadId: thread.threadId, 
-                    title: thread.title
-                }));
-            }
-            
-            setAllThreads(filteredData);
-        } catch (err) {
-            console.error("Error getting threads:", err);
-        }
-    };
 
     const createNewChat = () => {
         setPrompt("");
@@ -54,6 +28,7 @@ function Sidebar() {
         setNewChat(true);
         setPrevChat([]);
         setCurrentThreadId(uuidv1());
+        setShowHistory(false);
     };
 
     const changeThread = async (newthreadId) => {
@@ -73,6 +48,7 @@ function Sidebar() {
             setNewChat(false);
             setReply(null);
             setPrompt("");
+            setShowHistory(false);
 
         } catch (err) {
             console.error("Error changing thread:", err);
@@ -108,20 +84,34 @@ function Sidebar() {
 
     useEffect(() => {
         getAllThreads();
+        checkConfigStatus();
     }, [currThreadId]);
 
     return (
         <>
+            {showHistory && (
+                <div 
+                    className="sidebar-backdrop" 
+                    onClick={() => setShowHistory(false)}
+                />
+            )}
             <section className={`sidebar ${showHistory ? "show" : ""}`}>
-                <button onClick={createNewChat} className="new-chat-btn">
-                    <img src={blacklogo} alt="gpt logo" className="logo" />
-                    <span>
-                        <i className="fa-solid fa-pen-to-square"></i>
-                        New Chat
-                    </span>
-                </button>
+                <div className="sidebar-header">
+                    <span className="sidebar-brand">Companion</span>
+                    <button className="sidebar-collapse-btn" onClick={() => setShowHistory(false)}>
+                        <i className="fa-solid fa-angle-left"></i>
+                    </button>
+                </div>
+                
+                <div className="sidebar-navigation">
+                    <button onClick={createNewChat} className="nav-btn new-chat-nav-btn">
+                        <i className="fa-solid fa-plus"></i>
+                        <span>New chat</span>
+                    </button>
+                </div>
 
                 <div className="history-container">
+                    <span className="history-heading">Recents</span>
                     <ul className="history">
                         {allThreads?.map((thread, idx) => (
                             <li 
@@ -131,12 +121,10 @@ function Sidebar() {
                             >
                                 <div className="thread-content">
                                     <span className="thread-title">{thread.title}</span>
-                                    <span className="thread-time">
-                                        {new Date().toLocaleDateString()}
-                                    </span>
                                 </div>
                                 <i 
-                                    className="fa-solid fa-trash delete-btn"
+                                    className="fa-regular fa-trash-can delete-btn"
+                                    title="Delete thread"
                                     onClick={(e) => {
                                         e.stopPropagation();
                                         deleteThread(thread.threadId);
@@ -147,9 +135,6 @@ function Sidebar() {
                     </ul>
                 </div>
 
-                <div className="sign">
-                    <p>Sai's GPT</p>
-                </div>
             </section>
         </>
     );

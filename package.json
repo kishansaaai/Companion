@@ -1,5 +1,13 @@
 {
-  "dependencies": {
-    "openai": "^6.29.0"
+  "name": "companion-root",
+  "version": "1.0.0",
+  "description": "Root project setup to run Companion Frontend and Backend concurrently",
+  "private": true,
+  "scripts": {
+    "install:all": "npm install && npm install --prefix Backend && npm install --prefix Frontend",
+    "dev": "concurrently --kill-others \"npm run dev --prefix Backend\" \"npm run dev --prefix Frontend\""
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
   }
 }
